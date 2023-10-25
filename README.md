@@ -108,7 +108,7 @@ option 43 ascii "5A1N;B2;K4;I172.19.45.222;J80;"
 Which translates to:
 
 * `5A1N` 
-  * DHCP suboption indicating Plug and Play, active operation, version 1, and no debug information
+  * DHCP suboption indicating Plug and Play, active operation, PnP Version 1 (to select PnP Version 2, change this digit to 2), and no debug information
 * `B2`
   * PnP Server Address Type.  B2 = IPv4 Address, B1 = hostname
 * `K4`
