@@ -108,17 +108,26 @@ option 43 ascii "5A1N;B2;K4;I172.19.45.222;J80;"
 Which translates to:
 
 * `5A1N` 
-  * DHCP suboption indicating Plug and Play, active operation, PnP Version 1 (to select PnP Version 2, change this digit to 2), and no debug information
+  * `5`: DHCP suboption indicating Plug and Play
+  * `A`: Active operation (PnP Agent initiates communication with PnP server).  For Passive operation, use `P` instead.
+  * `1`: Version of the template that the PnP Agent should use
+  * `N`: Disable debugging information.  To enable debugging information, use `D` instead.
 * `B2`
-  * PnP Server Address Type.  B2 = IPv4 Address, B1 = hostname
+  * PnP Server Address Type:
+    * `1`: Hostname
+    * `2`: IPv4 Address
+    * `3`: IPv6 Address
 * `K4`
-  * Transport protocol.  K4 = HTTP, K5 = HTTPS
+  * Transport protocol to be used:
+    * `4`: HTTP
+    * `5`: HTTPS
+    * *Note: HTTP is the default option.  While the RFC for DHCP Option 43 specifies option numbers for the XMPP protocol, the HTTP protocol options should be used instead.*
 * `I172.19.45.222`
   * Capital letter "I" followed by IP Address or DNS Hostname of PnP server.
 * `J80`
   * Capital Letter "J" followed by the TCP Port number used by the PnP server.
 
-> *Note: There are additional optional values that can be added to this string.  A `T` option followed by a URL can be used to specify where to download the Trust Pool certificate bundle (required if HTTPS protocol is used).  Also, a `Z` option followed by the IP Address of an NTP server can be included (required when using trustpool security to ensure device time is sychronized).*
+> *Note: There are additional optional values that can be added to this string.  A `T` option followed by a URL can be used to specify where to download the Trust Pool certificate bundle (**mandatory** if HTTPS protocol - option `K5` - is used).  Also, a `Z` option followed by the IP Address of an NTP server can be included (**mandatory** when using option `T` for trustpool security, to ensure device time is sychronized).*
 
 ![PnP_DHCP_Process.png](/assets/PnP_DHCP_Process.png)
 
