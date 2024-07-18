@@ -10,7 +10,8 @@ Throughout this guide we will break down the process and explain each step in si
 
 * [Initial Device Bootup](#initial-device-bootup)
   * [Workflow Overview](#workflow-overview)
-  * [Device Bootstrap Config](#device-bootstrap-config)
+  * [Initial Discovery Communication](#initial-discovery-communication)
+* [Device Bootstrap Config](#device-bootstrap-config)
 * [Changing PnP Startup VLAN](#changing-pnp-startup-vlan)
 * [DHCP Discovery of PnP Server](#dhcp-discovery-of-pnp-server)
 * [DNS Discovery of PnP Server](#dns-discovery-of-pnp-server)
@@ -31,7 +32,21 @@ Throughout this guide we will break down the process and explain each step in si
 
 ---
 
-### Device Bootstrap Config
+### Initial Discovery Communication
+
+During the initial stage of discovering the Plug and Play server (Catalyst Center), the Plug and Play Agent software in IOS-XE must establish an HTTP connection with the server.  Many customers are concerned that this initial connection uses the unencrypted HTTP protocol over TCP port 80, as this creates a potential security threat.  However, it is important to understand the steps necessary to establish a trusted, secure and encrypted HTTPS connection between the Plug and Play Agent software and Catalyst Center - this can't happen without first establishing a mutual trust between client and server, using SSL certificates.
+
+Cisco network devices (primarily routers and switches) have hardware certificates issued and installed when they are built.  Those certificates are issued by Cisco's trusted Certificate Authority, which is also part of the trust chain installed on other Cisco platforms like Catalyst Center.  However, Catalyst Center, by default, will create its own self-signed SSL certificate during initial setup...and this certificate is not trusted by *anyone*.  You can install your own Enterprise SSL certificate after initial setup however, that certificate is also unlikely to be trusted by anyone outside your organization.  So, if the client (network device) and the server (Catalyst Center) can not establish a mutual chain of trust for each other's SSL certificates, they can not successfully build a secure HTTPS connection.
+
+For that reason, the initial connection between client and server must be over the unencrypted HTTP protocol so that the Plug and Play Agent can download and install the Catalyst Center server's SSL certificate.  Once that certificate has been installed as a "trustpoint" in IOS-XE, the Plug and Play Agent will reconnect to Catalyst Center using the HTTPS protocol on TCP port 443, and all further communications will be encrypted.
+
+Here is a diagram of this communication flow:
+
+![PnP_Server_Authentication_Process.png](/assets/PnP_Server_Authentication_Process.png)
+
+---
+
+## Device Bootstrap Config
 
 Some IOS-XE devices (including ISR4K routers, Catalyst 8K routers, Catalyst 3850 and 9K series switches) support the USB Autoinstall feature, which will allow the device to be "bootstrapped" with a configuration file that is stored on a USB Flash Drive connected to the device.  **This option would be useful if you are unable to configure DHCP on your management network, to allow new devices to obtain management IP addresses dynamically.**  
 
@@ -87,6 +102,10 @@ By default, the PnP agent on a switch running IOS-XE will use VLAN 1 as the mana
 The upstream network device uses Cisco Discovery Protocol (CDP) to communicate this new PnP Startup VLAN to the downstream switch.  The downstream switch then disables the DHCP Client on VLAN 1 and *enables* it on the new PnP Startup VLAN.  Finally, the dynamic trunk link that is established between the downstream and upstream devices changes the allowed VLAN to match the new PnP Startup VLAN:
 
 ![PnP_Startup_VLAN.png](/assets/PnP_Startup_VLAN.png)
+
+The CDP protocol transmits this new VLAN ID to downstream devices in a special payload section, named `Web mgmt port`.  Inside this section, a field named `Platform` contains the VLAN ID specified in the `pnp startup-vlan <vlan_id>` command:
+
+![cdp_pnp_pcap.png](/assets/cdp_pnp_pcap.png)
 
 [Cisco Blogs Documentation](https://blogs.cisco.com/developer/dna-center-pnp-day-0) </br>
 [Cisco Live Presentation](https://www.ciscolive.com/c/dam/r/ciscolive/emea/docs/2019/pdf/LTRNMS-2007.pdf)
@@ -178,7 +197,7 @@ The following preparatory steps are necessary to utilize the Plug and Play Porta
 4. The Controller Profile should be assigned as the "Default Profile" for a specific **Virtual Account** (a sub-division of the overall Smart Account), so that devices added to that Virtual Account are redirected to the appropriate Controller.
 5. To automatically load the purchased devices into the Plug and Play Portal, an additional feature license called `NETWORK-PNP-LIC` must be added to all devices that support it. 
     1. *At the time of this writing, the `NETWORK-PNP-LIC` option is a free, $0.00 licensed feature. This can be subject to change in the future.*
-    2. Alternatively, devices can be manually added to the Plug and Play Portal ***however***, this will require physical access to the device in order to obtain the SUDI Identifier from the Serial Console interface.
+    2. Alternatively, devices can be manually added to the Plug and Play Portal ***however***, this may require physical access to the device in order to obtain the SUDI Identifier from the Serial Console interface.
 6. Once devices are added to the Plug and Play Portal, they should be moved to the appropriate **Virtual Account** within your organization's Smart Account.
 
 The following documentation explains the procedure in detail (note that while the document is outdated, the information is still mostly accurate): [Plug and Play Connect Documentation](https://www.cisco.com/c/dam/en_us/services/downloads/plug-play-connect.pdf)
