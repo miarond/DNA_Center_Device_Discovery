@@ -44,6 +44,8 @@ Here is a diagram of this communication flow:
 
 ![PnP_Server_Authentication_Process.png](/assets/PnP_Server_Authentication_Process.png)
 
+[Return to ToC](#table-of-contents)
+
 ---
 
 ## Device Bootstrap Config
