@@ -175,6 +175,8 @@ dns-server 172.16.200.200
 
 The network device will construct the FQDN `pnpserver.customer.com` based on this information, and it will send a DNS Query to DNS server `172.16.200.200` attempting to resolve the IP Address of this FQDN.  Additionally, the network device will attempt to resolve the IP Address of an NTP server using the FQDN `pnpntpserver.customer.com`.
 
+  > :warning: If this method is used to discover DNA Center, the FQDN `pnpserver.<domain>.<tld>` **MUST** be included in DNA Center's SSL certficate, in either the "CN" (Common Name) field or the "SAN" (Subject Alternative Name) field.  When the PnP Agent in IOS-XE attempts to contact DNA Center, it will do so using the HTTP protocol toward this FQDN.  The initial HTTP connection will be established to download the SSL certificate from DNA Center, and then an HTTPS connection will be attempted.  **It is at THIS point** where the connection attempt will fail if the `pnpserver.<domain>.<tld>` FQDN is *not* included in DNA Center's SSL certificate.  The identity of DNA Center can not be confirmed by the PnP Agent, and the HTTPS connection will be terminated as a result.
+
 ![PnP_DNS_Process.png](/assets/PnP_DNS_Process.png)
 
 [DNA Center Documentation](https://www.cisco.com/c/en/us/td/docs/cloud-systems-management/network-automation-and-management/dna-center/2-3-3/user_guide/b_cisco_dna_center_ug_2_3_3/m_onboard-and-provision-devices-with-plug-and-play.html#id_90879)
