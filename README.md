@@ -65,7 +65,7 @@ This text file should be formatted exactly as any device configuration file woul
 ! If DNS is needed
 ip name-server <dns_server_ip>
 !
-interface <management_interface>
+interface Vlan1
  ip address <static_ip> <subnet_mask>
  no shutdown
 !
@@ -80,6 +80,10 @@ pnp profile dnac
 !
 end
 ```
+
+  > *Note: Bootstrap configuration ONLY supports the use of VLAN 1 or a routed uplink interface.  It is not possible to create a new VLAN from the bootstrap configuration file.*
+
+  > *Note: Bootstrap configuration and `pnp startup-vlan <id>` configurations are ***mutually exclusive***.  You can either use the bootstrap method on VLAN 1, or use the PnP Startup VLAN configuration on the upstream device, but NOT both.*
 
 When the device boots up you will eventually see entries similar to this in the log, and on the Serial Console:
 
@@ -123,7 +127,7 @@ The first method that the PnP Agent in IOS-XE uses to discover its PnP Controlle
 The PnP Agent will include Option 60 in its DHCP Discover message, containing the plain text value `ciscopnp`.  If the receiving DHCP server is properly configured, it should respond with a DHCP Offer message that includes Option 43.  Option 43 is an ASCII string value that is semicolon delimited, and contains encoded values which give the network device information about how to reach the PnP Server.  For example:
 
 ```
-option 43 ascii "5A1N;B2;K4;I172.19.45.222;J80;"
+option 43 ascii 5A1N;B2;K4;I172.19.45.222;J80;
 ```
 
 Which translates to:
