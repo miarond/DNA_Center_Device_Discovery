@@ -6,6 +6,18 @@ Throughout this guide we will break down the process and explain each step in si
 
   > *Disclaimer: The processes and configurations in this document are dependent up on platform type, model number, and IOS-XE code version.  We have tested these configurations on Catalyst 9300 switches running IOS-XE 17.x code.  Support for these features are subject to change.*
 
+## YouTube Video Demos!
+
+I created a video demo series to accompany this tutorial, and Cisco U published it to their YouTube Channel!  Check them out:
+
+- Part 1: https://youtu.be/KOVXvLcQgwM?si=AzQTuTbKvd29UKvI
+- Part 2: https://youtu.be/t_k0ijpO3fI?si=zbQAk04PMJfvs_78
+- Part 3: https://youtu.be/xOnf2A9xyxQ?si=L3UMcWeiBj_wLCoJ
+- Part 4: https://youtu.be/ImdUGoobNpE?si=jUAYn9bvzOJkqQSB
+- Part 5: https://youtu.be/S55JUFFGzJU?si=4mU-xgL08TNdKjB9
+- Part 6: https://youtu.be/c3QBknRIs7c?si=LZgnvIrl0cC94BqT
+
+
 ## Table of Contents
 
 * [Initial Device Bootup](#initial-device-bootup)
